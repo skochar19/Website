@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Compare Neighborhoods · Settle Smart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo-title">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Settle Smart Logo"/>
+      <h1>Settle Smart</h1>
+    </div>
+    <nav>
+      <a class="backlink" href="/">← Home</a>
+    </nav>
+  </header>
+
+  <main class="compare">
+    <h2>Compare Two Neighborhoods</h2>
+    <form method="post" class="compare__form">
+      <input type="text" name="n1" placeholder="Neighborhood A (e.g., Downtown)" required>
+      <input type="text" name="n2" placeholder="Neighborhood B (e.g., West Side)" required>
+      <button type="submit">Compare</button>
+    </form>
+
+    {% if left or right %}
+    <section class="compare__grid">
+      <article class="panel">
+        <h3>{{ left.name if left else "Neighborhood A" }}</h3>
+        {% if left %}
+        <ul>
+          <li><strong>Overall:</strong> {{ left.overall_score }}/5</li>
+          <li><strong>Crime:</strong> {{ left.crime_rate }} ({{ left.crime_score }}/5)</li>
+          <li><strong>Cost of Living:</strong> {{ left.cost_of_living }}</li>
+          <li><strong>Tax:</strong> {{ left.tax_rate }}</li>
+          <li><strong>Pollution:</strong> {{ left.pollution }}</li>
+          <li><strong>Weather:</strong> {{ left.weather }}</li>
+          <li><strong>Disaster Risk:</strong> {{ left.disaster_risk }}</li>
+          <li><strong>Noise:</strong> {{ left.noise }}</li>
+          <li><strong>Walk/Bike:</strong> {{ left.walk_bike }}</li>
+          <li><strong>Medical Access:</strong> {{ left.medical_access }}</li>
+          <li><strong>Diversity:</strong> {{ left.diversity }}</li>
+          <li><strong>Age:</strong> {{ left.age_distribution }}</li>
+          <li><strong>Income:</strong> {{ left.income }}</li>
+        </ul>
+        {% else %}
+        <p>Enter a name above then submit.</p>
+        {% endif %}
+      </article>
+
+      <article class="panel">
+        <h3>{{ right.name if right else "Neighborhood B" }}</h3>
+        {% if right %}
+        <ul>
+          <li><strong>Overall:</strong> {{ right.overall_score }}/5</li>
+          <li><strong>Crime:</strong> {{ right.crime_rate }} ({{ right.crime_score }}/5)</li>
+          <li><strong>Cost of Living:</strong> {{ right.cost_of_living }}</li>
+          <li><strong>Tax:</strong> {{ right.tax_rate }}</li>
+          <li><strong>Pollution:</strong> {{ right.pollution }}</li>
+          <li><strong>Weather:</strong> {{ right.weather }}</li>
+          <li><strong>Disaster Risk:</strong> {{ right.disaster_risk }}</li>
+          <li><strong>Noise:</strong> {{ right.noise }}</li>
+          <li><strong>Walk/Bike:</strong> {{ right.walk_bike }}</li>
+          <li><strong>Medical Access:</strong> {{ right.medical_access }}</li>
+          <li><strong>Diversity:</strong> {{ right.diversity }}</li>
+          <li><strong>Age:</strong> {{ right.age_distribution }}</li>
+          <li><strong>Income:</strong> {{ right.income }}</li>
+        </ul>
+        {% else %}
+        <p>Enter a name above then submit.</p>
+        {% endif %}
+      </article>
+    </section>
+    {% endif %}
+  </main>
+
+  <footer>
+    © 2025 Settle Smart · Smarter Choices Better Places
+  </footer>
+</body>
+</html>

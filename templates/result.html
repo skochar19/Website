@@ -1,53 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{{ city.name }} | Settle Smart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ city.name }} · Settle Smart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo">
-        <h1>Settle Smart</h1>
-    </header>
+  <header class="site-header">
+    <div class="logo-title">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Settle Smart Logo"/>
+      <h1>Settle Smart</h1>
+    </div>
+    <nav>
+      <a class="backlink" href="/">← New Search</a>
+      <a class="backlink" href="/compare">Compare</a>
+    </nav>
+  </header>
 
-    <h2 style="text-align:center; margin-top: 2em;">{{ city.name }} Overview</h2>
+  <main class="result">
+    <h2>{{ city.name }} Overview</h2>
 
-    <table>
-        <tr>
-            <th>Metric</th>
-            <th>Value</th>
-            <th>Score out of 5</th>
-        </tr>
-        <tr>
-            <td><strong>Weather</strong></td>
-            <td>{{ city.weather }}</td>
-            <td>{{ city.walkability }}</td>
-        </tr>
-        <tr>
-            <td><strong>Cost of Living</strong></td>
-            <td>{{ city.cost_of_living }}</td>
-            <td>{{ city.walkability }}</td>
-        </tr>
-        <tr>
-            <td><strong>Crime Rate</strong></td>
-            <td>{{ city.crime_rate }}</td>
-            <td>{{ city.walkability }}</td>
-        </tr>
-        <tr>
-            <td><strong>Future Score</strong></td>
-            <td>{{ city.future_score }}</td>
-            <td>{{ city.walkability }}</td>
-        </tr>
-    </table>
-
-    <div style="text-align:center; margin-top: 20px;">
-        <a href="/" style="text-decoration:none;">
-            <button>Search Another City</button>
-        </a>
+    <div class="overall">
+      <div class="overall__score">
+        <div class="badge">{{ city.overall_score }}</div>
+        <p>Overall Score (out of 5)</p>
+      </div>
+      <div class="overall__meta">
+        <p><strong>Weather:</strong> {{ city.weather }}</p>
+        <p><strong>Cost of Living:</strong> {{ city.cost_of_living }}</p>
+        <p><strong>Crime Rate:</strong> {{ city.crime_rate }}</p>
+        <p><strong>Future Score:</strong> {{ city.future_score }}</p>
+      </div>
     </div>
 
-    <footer>
-        © 2025 Settle Smart | Smarter Choices Better Places
-    </footer>
+    <!-- CATEGORY CARDS -->
+    <section class="grid-2">
+      <article class="panel">
+        <h3>Safety</h3>
+        <ul>
+          <li>Crime rate: {{ city.crime_rate }}</li>
+          <li>Natural disaster risk: {{ city.disaster_risk or "—" }}</li>
+          <li>Noise levels: {{ city.noise or "—" }}</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Affordability</h3>
+        <ul>
+          <li>Cost of living: {{ city.cost_of_living }}</li>
+          <li>Property tax: {{ city.tax_rate }}</li>
+          <li>Average income: {{ city.income }}</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Environment</h3>
+        <ul>
+          <li>Pollution: {{ city.pollution }}</li>
+          <li>Weather: {{ city.weather }}</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Lifestyle</h3>
+        <ul>
+          <li>Walkability/Bikeability: {{ city.walkability }}</li>
+          <li>Diversity & culture: {{ city.diversity }}</li>
+          <li>Age distribution: {{ city.age_distribution }}</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Services</h3>
+        <ul>
+          <li>Hospitals/Urgent care: {{ city.medical_access }}</li>
+          <li>School district ratings: {{ city.school_ratings or "—" }}</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Settle Smart · Smarter Choices Better Places
+  </footer>
 </body>
 </html>

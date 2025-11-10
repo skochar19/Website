@@ -1,54 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Settle Smart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="utf-8" />
+  <title>Settle Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <div class="logo-title">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo">
-            <h1>Settle Smart</h1>
-        </div>
-    
-        <nav>
-            <div class="dropdown">
-                <div class="menu-toggle">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
-                <ul class="dropdown-menu">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/tips">Tips</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-    
-    
+  <!-- Top bar -->
+  <header>
+  <a href="/" class="brand">
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
+    <div class="brand-text">
+      <span class="title">Settle Smart</span>
+      <span class="tagline">Smarter Choices • Better Places</span>
+    </div>
+  </a>
 
-    <form method="post">
-        <h2>Discover insights before you move!</h2>
-        <label>Enter City, State:</label>
-        <input type="text" name="city" placeholder="e.g., Cary, NC" required>
-        <br><br>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/compare">Compare</a>
+    <a href="/about">About</a>
+    <a href="/tips">Tips</a>
+    <a href="/contact">Contact</a>
+  </nav>
+</header>
+
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <h2>Discover insights before you move!</h2>
+      <p class="sub">Compare cities and neighborhoods with clear scores across what really matters.</p>
+
+      <!-- Search card -->
+      <form method="post" class="search-card">
+        <label for="city" class="sr-only">Enter City, State</label>
+        <input id="city" type="text" name="city" placeholder="e.g., Cary, NC" required />
         <button type="submit">Get Insights</button>
-    </form>
+      </form>
 
-    <footer>
-        © 2025 Settle Smart | Smarter Choices Better Places
-    </footer>
-    <script>
-        const menuToggle = document.getElementById('mobile-menu');
-        const menu = document.querySelector('ul.menu');
-        
-        menuToggle.addEventListener('click', () => {
-            menu.classList.toggle('active');
-        });
-        </script>
-        
+      <!-- Quick gallery -->
+      <div class="gallery">
+        <img src="https://images.unsplash.com/photo-1460472178825-e5240623afd5?q=80&w=1200&auto=format&fit=crop" alt="City skyline" />
+        <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1200&auto=format&fit=crop" alt="Neighborhood street" />
+        <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop" alt="Parks and trails" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature categories (what we score) -->
+  <section class="features">
+    <h3>What we analyze</h3>
+    <div class="grid">
+      <div class="feature-card">
+        <h4>Cost & Taxes</h4>
+        <ul>
+          <li>Cost of living</li>
+          <li>Property tax rates</li>
+          <li>Average income levels</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h4>Safety & Health</h4>
+        <ul>
+          <li>Crime rates</li>
+          <li>Access to hospitals / urgent care</li>
+          <li>Pollution</li>
+          <li>Noise levels</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h4>Environment</h4>
+        <ul>
+          <li>Weather</li>
+          <li>Natural-disaster risk</li>
+          <li>Parks & green space (future)</li>
+        </ul>
+      </div>
+      <div class="feature-card">
+        <h4>Community</h4>
+        <ul>
+          <li>School district ratings</li>
+          <li>Walkability / bikeability</li>
+          <li>Diversity & cultural groups</li>
+          <li>Age distribution</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2025 Settle Smart | Smarter Choices Better Places
+  </footer>
+
+  <script>
+    // Mobile menu toggle (now matches actual elements)
+    const menuToggle = document.getElementById('mobile-menu');
+    const menu = document.querySelector('.dropdown .menu');
+    if (menuToggle && menu) {
+      menuToggle.addEventListener('click', () => menu.classList.toggle('active'));
+    }
+  </script>
 </body>
 </html>
