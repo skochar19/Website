@@ -1,0 +1,180 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background-color: #4facd6;
+    color: white;
+    padding: 1.2em 2em;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+header nav .dropdown{
+    margin-left: auto;
+}
+
+/* Hamburger menu */
+.menu-toggle {
+    display: none; /* hide by default */
+    flex-direction: column;
+    cursor: pointer;
+    margin-left: auto;
+    gap: 5px;
+}
+
+.menu-toggle .bar {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transition: all 0.3s;
+    border-radius: 2px;
+}
+
+/* Hamburger bars */
+.menu-toggle {
+    width: 30px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 22px;
+}
+
+.menu-toggle .bar {
+    height: 3px;
+    width: 100%;
+    background-color: white;
+    border-radius: 2px;
+}
+
+/* Dropdown menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: auto; /* push to the right */
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px; /* below the bars */
+    background-color: #4facd6;
+    min-width: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 10;
+    flex-direction: column;
+}
+
+.dropdown-menu li {
+    list-style: none;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Show menu on hover */
+.dropdown:hover .dropdown-menu {
+    display: flex;
+}
+
+
+
+header img {
+    height: 50px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+h1 {
+    display: inline;
+    font-size: 2em;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+form {
+    margin: 2em auto;
+    width: 70%;
+    text-align: center;
+    background: white;
+    padding: 2em;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+input {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 40%;
+}
+
+button {
+    background-color: #4facd6;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #4facd6;
+}
+
+table {
+    margin: 2em auto;
+    width: 80%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    background-color: #4facd6;
+    color: white;
+}
+
+footer {
+    background-color: #4facd6;
+    color: white;
+    text-align: center;
+    padding: 1em;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 0.9em;
+}

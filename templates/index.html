@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settle Smart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo-title">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo">
+            <h1>Settle Smart</h1>
+        </div>
+    
+        <nav>
+            <div class="dropdown">
+                <div class="menu-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+                <ul class="dropdown-menu">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/tips">Tips</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    
+
+    <form method="post">
+        <h2>Discover insights before you move!</h2>
+        <label>Enter City, State:</label>
+        <input type="text" name="city" placeholder="e.g., Cary, NC" required>
+        <br><br>
+        <button type="submit">Get Insights</button>
+    </form>
+
+    <footer>
+        © 2025 Settle Smart | Smarter Choices Better Places
+    </footer>
+    <script>
+        const menuToggle = document.getElementById('mobile-menu');
+        const menu = document.querySelector('ul.menu');
+        
+        menuToggle.addEventListener('click', () => {
+            menu.classList.toggle('active');
+        });
+        </script>
+        
+</body>
+</html>
