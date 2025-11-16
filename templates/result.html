@@ -3,80 +3,104 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{{ city.name }} · Settle Smart</title>
+  <title>{{ county.name }} · Settle Smart</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Map styling – adjust height as you like */
+    #map {
+      width: 100%;
+      height: 300px;
+      border-radius: 12px;
+      margin-top: 0.5rem;
+    }
+    .map-panel {
+      grid-column: 1 / -1; /* make map span full width in the grid if you use grid-2 */
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
     <div class="logo-title">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Settle Smart Logo"/>
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo"/>
       <h1>Settle Smart</h1>
     </div>
     <nav>
       <a class="backlink" href="/">← New Search</a>
       <a class="backlink" href="/compare">Compare</a>
     </nav>
+    
   </header>
 
   <main class="result">
-    <h2>{{ city.name }} Overview</h2>
+    <h2>{{ county.name }} Overview</h2>
 
     <div class="overall">
       <div class="overall__score">
-        <div class="badge">{{ city.overall_score }}</div>
-        <p>Overall Score (out of 5)</p>
-      </div>
-      <div class="overall__meta">
-        <p><strong>Weather:</strong> {{ city.weather }}</p>
-        <p><strong>Cost of Living:</strong> {{ city.cost_of_living }}</p>
-        <p><strong>Crime Rate:</strong> {{ city.crime_rate }}</p>
-        <p><strong>Future Score:</strong> {{ city.future_score }}</p>
+        <div class="badge">{{ county.overall_score }}</div>
+        <p>Overall Score (out of 100)</p>
       </div>
     </div>
 
     <!-- CATEGORY CARDS -->
     <section class="grid-2">
+      <!-- Weather -->
       <article class="panel">
-        <h3>Safety</h3>
+        <h3>Weather</h3>
         <ul>
-          <li>Crime rate: {{ city.crime_rate }}</li>
-          <li>Natural disaster risk: {{ city.disaster_risk or "—" }}</li>
-          <li>Noise levels: {{ city.noise or "—" }}</li>
+          <li>Average Summer Temperature: {{ county.summerTemp }} °F</li>
+          <li>Average Winter Temperature: {{ county.winterTemp }} °F</li>
         </ul>
       </article>
 
+      <!-- Cost of living -->
       <article class="panel">
-        <h3>Affordability</h3>
+        <h3>Average Cost of Living</h3>
         <ul>
-          <li>Cost of living: {{ city.cost_of_living }}</li>
-          <li>Property tax: {{ city.tax_rate }}</li>
-          <li>Average income: {{ city.income }}</li>
+          <li>Estimated monthly cost: ${{ county.averageCostOfLiving }}/month</li>
         </ul>
       </article>
 
+      <!-- Crime & Safety -->
       <article class="panel">
-        <h3>Environment</h3>
+        <h3>Crime &amp; Safety</h3>
         <ul>
-          <li>Pollution: {{ city.pollution }}</li>
-          <li>Weather: {{ city.weather }}</li>
+          <li>Crime &amp; Safety Level: {{ county.crimeSafety }}</li>
         </ul>
       </article>
 
+      <!-- School Quality -->
       <article class="panel">
-        <h3>Lifestyle</h3>
+        <h3>School Quality</h3>
         <ul>
-          <li>Walkability/Bikeability: {{ city.walkability }}</li>
-          <li>Diversity & culture: {{ city.diversity }}</li>
-          <li>Age distribution: {{ city.age_distribution }}</li>
+          <li>Overall School Quality: {{ county.schoolQuality }}</li>
         </ul>
       </article>
 
+      <!-- Overall diversity percent -->
       <article class="panel">
-        <h3>Services</h3>
+        <h3>Diversity (Race Breakdown (%))</h3>
         <ul>
-          <li>Hospitals/Urgent care: {{ city.medical_access }}</li>
-          <li>School district ratings: {{ city.school_ratings or "—" }}</li>
+          <li>White: {{ county.race.white }}%</li>
+          <li>Black or African American: {{ county.race.black }}%</li>
+          <li>Hispanic / Latino: {{ county.race.hispanic }}%</li>
+          <li>Asian: {{ county.race.asian }}%</li>
+          <li>American Indian: {{ county.race.american_indian }}%</li>
+          <li>Native Hawaiian / Pacific Islander: {{ county.race.native_hawaiian }}%</li>
+          <li>Multiracial: {{ county.race.multiracial }}%</li>
         </ul>
+      </article>
+
+
+      <!-- Google Map panel -->
+      <article class="panel map-panel">
+        <h3>Location on Map</h3>
+        <!-- store the data in attributes instead of inside JS -->
+        <div
+          id="map"
+          data-lat="{{ county.lat }}"
+          data-lng="{{ county.lng }}"
+          data-county-name="{{ county.name }}"
+        ></div>
       </article>
     </section>
   </main>
@@ -84,5 +108,33 @@
   <footer>
     © 2025 Settle Smart · Smarter Choices Better Places
   </footer>
+
+  <!-- Map init script using the selected county -->
+  <script>
+    function initMap() {
+      const mapDiv = document.getElementById("map");
+
+      // Read values from data-attributes (they come in as strings)
+      const lat = parseFloat(mapDiv.dataset.lat);
+      const lng = parseFloat(mapDiv.dataset.lng);
+      const countyName = mapDiv.dataset.countyName || "Selected County";
+
+      const countyCenter = { lat: lat, lng: lng };
+
+      const map = new google.maps.Map(mapDiv, {
+        center: countyCenter,
+        zoom: 8
+      });
+
+      new google.maps.Marker({
+        position: countyCenter,
+        map: map,
+        title: countyName
+      });
+    }
+  </script>
+
+  <!-- 🔑 Simple Google Maps JS API loader – put YOUR REAL API KEY below -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDv7CKrmFpZfe-NFNQyy-PpKQQcVYLXUdY&callback=initMap"></script>
 </body>
 </html>

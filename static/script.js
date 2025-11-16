@@ -1,19 +1,25 @@
 document.getElementById("submitBtn").addEventListener("click", async () => {
-    const city = document.getElementById("cityInput").value;
-    const response = await fetch("/get_city_data", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ city })
-    });
-  
-    const data = await response.json();
-    document.getElementById("result").innerHTML = `
-      <h2>${data.city}</h2>
-      <p>Cost of Living: ${data.cost_of_living}</p>
-      <p>Weather: ${data.weather}</p>
-      <p>Walkability: ${data.walkability}</p>
-      <p>School Quality: ${data.school_quality}</p>
-      <p>Crime Rate: ${data.crime_rate}</p>
-    `;
+  const county = document.getElementById("cityInput").value;   // now using county
+  const response = await fetch("/get_county_data", {           // updated endpoint
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ county })
   });
-  
+
+  const data = await response.json();
+
+  // Handle "not found"
+  if (data.error) {
+    document.getElementById("result").innerHTML = `<p>${data.error}</p>`;
+    return;
+  }
+
+  document.getElementById("result").innerHTML = `
+    <h2>${data.name}</h2>
+    <p><strong>Average Weather:</strong> ${data.averageWeather}</p>
+    <p><strong>Average Cost of Living:</strong> ${data.averageCostOfLiving}</p>
+    <p><strong>Crime & Safety:</strong> ${data.crimeSafety}</p>
+    <p><strong>School Quality:</strong> ${data.schoolQuality}</p>
+    <p><strong>Diversity:</strong> ${data.diversityPercent}%</p>
+  `;
+});

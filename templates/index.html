@@ -9,34 +9,41 @@
 <body>
   <!-- Top bar -->
   <header>
-  <a href="/" class="brand">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
-    <div class="brand-text">
-      <span class="title">Settle Smart</span>
-      <span class="tagline">Smarter Choices • Better Places</span>
-    </div>
-  </a>
+    <a href="/" class="brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
+      <div class="brand-text">
+        <span class="title">Settle Smart</span>
+        <span class="tagline">Smarter Choices • Better Places</span>
+      </div>
+    </a>
 
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="/compare">Compare</a>
-    <a href="/about">About</a>
-    <a href="/tips">Tips</a>
-    <a href="/contact">Contact</a>
-  </nav>
-</header>
-
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/compare">Compare</a>
+    </nav>
+    
+  </header>
 
   <!-- Hero -->
   <section class="hero">
     <div class="hero-inner">
-      <h2>Discover insights before you move!</h2>
-      <p class="sub">Compare cities and neighborhoods with clear scores across what really matters.</p>
-
       <!-- Search card -->
-      <form method="post" class="search-card">
-        <label for="city" class="sr-only">Enter City, State</label>
-        <input id="city" type="text" name="city" placeholder="e.g., Cary, NC" required />
+      <form method="post" action="/result" class="search-card">
+        <h2>Discover insights in Maryland before you move!</h2>
+
+        {% if error %}
+          <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <label for="county-select">Select a Maryland county:</label>
+        <select id="county-select" name="county" required>
+          <option value="">-- Choose a county --</option>
+          {% for county in counties %}
+            <option value="{{ county }}">{{ county }}</option>
+          {% endfor %}
+        </select>
+
+        <br><br>
         <button type="submit">Get Insights</button>
       </form>
 
@@ -53,54 +60,20 @@
   <section class="features">
     <h3>What we analyze</h3>
     <div class="grid">
-      <div class="feature-card">
-        <h4>Cost & Taxes</h4>
-        <ul>
-          <li>Cost of living</li>
-          <li>Property tax rates</li>
-          <li>Average income levels</li>
-        </ul>
-      </div>
-      <div class="feature-card">
-        <h4>Safety & Health</h4>
-        <ul>
-          <li>Crime rates</li>
-          <li>Access to hospitals / urgent care</li>
-          <li>Pollution</li>
-          <li>Noise levels</li>
-        </ul>
-      </div>
-      <div class="feature-card">
-        <h4>Environment</h4>
-        <ul>
-          <li>Weather</li>
-          <li>Natural-disaster risk</li>
-          <li>Parks & green space (future)</li>
-        </ul>
-      </div>
-      <div class="feature-card">
-        <h4>Community</h4>
-        <ul>
-          <li>School district ratings</li>
-          <li>Walkability / bikeability</li>
-          <li>Diversity & cultural groups</li>
-          <li>Age distribution</li>
-        </ul>
-      </div>
+      <div class="feature-card">Weather</div>
+      <div class="feature-card">Cost of Living</div>
+      <div class="feature-card">Crime and Safety</div>
+      <div class="feature-card">School District Quality</div>
+      <div class="feature-card">Racial Diversity</div>
     </div>
   </section>
+  
 
   <footer>
     © 2025 Settle Smart | Smarter Choices Better Places
   </footer>
 
-  <script>
-    // Mobile menu toggle (now matches actual elements)
-    const menuToggle = document.getElementById('mobile-menu');
-    const menu = document.querySelector('.dropdown .menu');
-    if (menuToggle && menu) {
-      menuToggle.addEventListener('click', () => menu.classList.toggle('active'));
-    }
-  </script>
+  <!-- JS not strictly needed, but included for future enhancements -->
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>

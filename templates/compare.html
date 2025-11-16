@@ -3,75 +3,83 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Compare Neighborhoods · Settle Smart</title>
+  <title>Compare Counties · Settle Smart</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <header class="site-header">
     <div class="logo-title">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Settle Smart Logo"/>
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo"/>
       <h1>Settle Smart</h1>
     </div>
-    <nav>
-      <a class="backlink" href="/">← Home</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/compare">Compare</a>
     </nav>
   </header>
+  
 
   <main class="compare">
-    <h2>Compare Two Neighborhoods</h2>
-    <form method="post" class="compare__form">
-      <input type="text" name="n1" placeholder="Neighborhood A (e.g., Downtown)" required>
-      <input type="text" name="n2" placeholder="Neighborhood B (e.g., West Side)" required>
+    <h2>Compare Maryland Counties</h2>
+    <p>Select any two counties to compare key factors side by side.</p>
+
+    <form class="compare__form" method="post">
+      <label>
+        County 1:
+        <select name="county1" required>
+          <option value="">-- Choose a county --</option>
+          {% for c in counties %}
+            <option value="{{ c }}"
+              {% if county1_name == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
+      <label>
+        County 2:
+        <select name="county2" required>
+          <option value="">-- Choose a county --</option>
+          {% for c in counties %}
+            <option value="{{ c }}"
+              {% if county2_name == c %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
+      </label>
+
       <button type="submit">Compare</button>
     </form>
 
-    {% if left or right %}
+    {% if county1 or county2 %}
     <section class="compare__grid">
+      {% if county1 %}
       <article class="panel">
-        <h3>{{ left.name if left else "Neighborhood A" }}</h3>
-        {% if left %}
+        <h3>{{ county1.name }}</h3>
         <ul>
-          <li><strong>Overall:</strong> {{ left.overall_score }}/5</li>
-          <li><strong>Crime:</strong> {{ left.crime_rate }} ({{ left.crime_score }}/5)</li>
-          <li><strong>Cost of Living:</strong> {{ left.cost_of_living }}</li>
-          <li><strong>Tax:</strong> {{ left.tax_rate }}</li>
-          <li><strong>Pollution:</strong> {{ left.pollution }}</li>
-          <li><strong>Weather:</strong> {{ left.weather }}</li>
-          <li><strong>Disaster Risk:</strong> {{ left.disaster_risk }}</li>
-          <li><strong>Noise:</strong> {{ left.noise }}</li>
-          <li><strong>Walk/Bike:</strong> {{ left.walk_bike }}</li>
-          <li><strong>Medical Access:</strong> {{ left.medical_access }}</li>
-          <li><strong>Diversity:</strong> {{ left.diversity }}</li>
-          <li><strong>Age:</strong> {{ left.age_distribution }}</li>
-          <li><strong>Income:</strong> {{ left.income }}</li>
+          <li><strong>Overall Score:</strong> {{ county1.overall_score }} / 100</li>
+          <li><strong>Summer Temp:</strong> {{ county1.summerTemp }} °F</li>
+          <li><strong>Winter Temp:</strong> {{ county1.winterTemp }} °F</li>
+          <li><strong>Cost of Living:</strong> ${{ county1.averageCostOfLiving }}/month</li>
+          <li><strong>Crime &amp; Safety:</strong> {{ county1.crimeSafety }}</li>
+          <li><strong>School Quality:</strong> {{ county1.schoolQuality }}</li>
+          <li><strong>Diversity (People of Color):</strong> {{ county1.diversityPercent }}%</li>
         </ul>
-        {% else %}
-        <p>Enter a name above then submit.</p>
-        {% endif %}
       </article>
+      {% endif %}
 
+      {% if county2 %}
       <article class="panel">
-        <h3>{{ right.name if right else "Neighborhood B" }}</h3>
-        {% if right %}
+        <h3>{{ county2.name }}</h3>
         <ul>
-          <li><strong>Overall:</strong> {{ right.overall_score }}/5</li>
-          <li><strong>Crime:</strong> {{ right.crime_rate }} ({{ right.crime_score }}/5)</li>
-          <li><strong>Cost of Living:</strong> {{ right.cost_of_living }}</li>
-          <li><strong>Tax:</strong> {{ right.tax_rate }}</li>
-          <li><strong>Pollution:</strong> {{ right.pollution }}</li>
-          <li><strong>Weather:</strong> {{ right.weather }}</li>
-          <li><strong>Disaster Risk:</strong> {{ right.disaster_risk }}</li>
-          <li><strong>Noise:</strong> {{ right.noise }}</li>
-          <li><strong>Walk/Bike:</strong> {{ right.walk_bike }}</li>
-          <li><strong>Medical Access:</strong> {{ right.medical_access }}</li>
-          <li><strong>Diversity:</strong> {{ right.diversity }}</li>
-          <li><strong>Age:</strong> {{ right.age_distribution }}</li>
-          <li><strong>Income:</strong> {{ right.income }}</li>
+          <li><strong>Overall Score:</strong> {{ county2.overall_score }} / 100</li>
+          <li><strong>Summer Temp:</strong> {{ county2.summerTemp }} °F</li>
+          <li><strong>Winter Temp:</strong> {{ county2.winterTemp }} °F</li>
+          <li><strong>Cost of Living:</strong> ${{ county2.averageCostOfLiving }}/month</li>
+          <li><strong>Crime &amp; Safety:</strong> {{ county2.crimeSafety }}</li>
+          <li><strong>School Quality:</strong> {{ county2.schoolQuality }}</li>
+          <li><strong>Diversity (People of Color):</strong> {{ county2.diversityPercent }}%</li>
         </ul>
-        {% else %}
-        <p>Enter a name above then submit.</p>
-        {% endif %}
       </article>
+      {% endif %}
     </section>
     {% endif %}
   </main>
