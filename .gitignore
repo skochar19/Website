@@ -1,0 +1,15 @@
+# Environment variables (never commit this)
+.env
+
+# Database (local data, not for git)
+*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# macOS
+.DS_Store

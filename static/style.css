@@ -1318,6 +1318,33 @@ footer {
   text-decoration: none;
 }
 
+.history-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: color .15s;
+}
+
+.history-link:hover .history-county,
+.history-link:hover {
+  color: var(--brand);
+}
+
+a.chat-history-item {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.chat-history-item:hover {
+  background: #dde8f2;
+}
+
+a.chat-history-item .ch-time {
+  color: var(--brand);
+  font-weight: 500;
+}
+
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 640px) {
   .gallery { grid-template-columns: 1fr; }

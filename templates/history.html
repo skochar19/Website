@@ -49,7 +49,7 @@
           <ul class="history-list">
             {% for row in explore_rows %}
               <li class="history-item">
-                <span class="history-county">{{ row.county_name }}</span>
+                <a class="history-county history-link" href="/result?county={{ row.county_name | urlencode }}">{{ row.county_name }}</a>
                 <span class="history-date">{{ row.searched_at[:16] }}</span>
               </li>
             {% endfor %}
@@ -67,7 +67,9 @@
           <ul class="history-list">
             {% for row in compare_rows %}
               <li class="history-item">
-                <span class="history-county">{{ row.county1 }} <span class="vs-tag">vs</span> {{ row.county2 }}</span>
+                <a class="history-county history-link" href="/compare?county1={{ row.county1 | urlencode }}&county2={{ row.county2 | urlencode }}">
+                  {{ row.county1 }} <span class="vs-tag">vs</span> {{ row.county2 }}
+                </a>
                 <span class="history-date">{{ row.searched_at[:16] }}</span>
               </li>
             {% endfor %}
@@ -84,11 +86,11 @@
         {% if chat_rows %}
           <div class="chat-history-list">
             {% for row in chat_rows %}
-              <div class="chat-history-item">
+              <a class="chat-history-item history-link" href="/assistant?q={{ row.user_message | urlencode }}">
                 <div class="ch-user"><span class="ch-label">You</span>{{ row.user_message }}</div>
                 <div class="ch-bot"><span class="ch-label">AI</span>{{ row.bot_reply }}</div>
-                <div class="ch-time">{{ row.sent_at[:16] }}</div>
-              </div>
+                <div class="ch-time">{{ row.sent_at[:16] }} · Click to continue this conversation</div>
+              </a>
             {% endfor %}
           </div>
         {% else %}

@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 import sqlite3
+import os
 import requests as req
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "settle-smart-secret-key-change-me"
@@ -330,15 +334,19 @@ def explore():
     return render_template("explore.html", counties=get_all_county_names())
 
 
-@app.route("/result", methods=["POST"])
+@app.route("/result", methods=["GET", "POST"])
 def result():
-    selected_county = request.form.get("county")
+    if request.method == "POST":
+        selected_county = request.form.get("county")
+    else:
+        selected_county = request.args.get("county")
+
     if not selected_county:
         return render_template("explore.html", counties=get_all_county_names(), error="Please select a county.")
     overview = get_county_overview(selected_county)
 
-    # Save to search history if logged in
-    if current_user.is_authenticated:
+    # Save to search history if logged in (only on POST to avoid double-saving from history clicks)
+    if current_user.is_authenticated and request.method == "POST":
         conn = get_db()
         conn.execute(
             "INSERT INTO search_history (user_id, county_name) VALUES (?, ?)",
@@ -356,16 +364,21 @@ def compare():
     if request.method == "POST":
         county1_name = request.form.get("county1")
         county2_name = request.form.get("county2")
-        if county1_name: county1 = get_county_overview(county1_name)
-        if county2_name: county2 = get_county_overview(county2_name)
-        if current_user.is_authenticated and county1_name and county2_name:
-            conn = get_db()
-            conn.execute(
-                "INSERT INTO compare_history (user_id, county1, county2) VALUES (?, ?, ?)",
-                (current_user.id, county1_name, county2_name),
-            )
-            conn.commit()
-            conn.close()
+    elif request.args.get("county1") and request.args.get("county2"):
+        county1_name = request.args.get("county1")
+        county2_name = request.args.get("county2")
+
+    if county1_name: county1 = get_county_overview(county1_name)
+    if county2_name: county2 = get_county_overview(county2_name)
+
+    if request.method == "POST" and current_user.is_authenticated and county1_name and county2_name:
+        conn = get_db()
+        conn.execute(
+            "INSERT INTO compare_history (user_id, county1, county2) VALUES (?, ?, ?)",
+            (current_user.id, county1_name, county2_name),
+        )
+        conn.commit()
+        conn.close()
     return render_template(
         "compare.html",
         counties=get_all_county_names(),
@@ -534,8 +547,7 @@ Never make up data — use the snapshot above for this county and general knowle
     })
 
     try:
-        # Hardcoded key (works, but rotate it if you've pasted it anywhere public)
-        api_key = "my-api-key"
+        api_key = os.environ.get("GEMINI_API_KEY", "")
 
         response = req.post(
             f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}",

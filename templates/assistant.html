@@ -121,6 +121,14 @@
     document.querySelectorAll(".suggestion").forEach(btn => {
       btn.addEventListener("click", () => sendChat(btn.dataset.q));
     });
+
+    // Pre-fill from ?q= param (coming from history page)
+    const params = new URLSearchParams(window.location.search);
+    const preQ = params.get("q");
+    if (preQ) {
+      chatInput.value = preQ;
+      chatInput.focus();
+    }
   </script>
 
 </body>
