@@ -5,18 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{{ county.name }} · Settle Smart</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    /* Map styling – adjust height as you like */
-    #map {
-      width: 100%;
-      height: 300px;
-      border-radius: 12px;
-      margin-top: 0.5rem;
-    }
-    .map-panel {
-      grid-column: 1 / -1; /* make map span full width in the grid if you use grid-2 */
-    }
-  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
   <header class="site-header">
@@ -24,117 +13,166 @@
       <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo"/>
       <h1>Settle Smart</h1>
     </div>
-    <nav>
-      <a class="backlink" href="/">← New Search</a>
-      <a class="backlink" href="/compare">Compare</a>
+    <nav class="nav-links">
+      <a href="/" class="backlink">Home</a>
+      <a href="/explore" class="backlink">Explore</a>
+      <a href="/compare" class="backlink">Compare</a>
+      {% if current_user.is_authenticated %}
+        <span class="nav-divider">|</span>
+        <a href="/history" class="backlink">History</a>
+        <a href="/logout" class="backlink nav-auth">Logout</a>
+      {% else %}
+        <span class="nav-divider">|</span>
+        <a href="/login" class="backlink nav-auth">Log In</a>
+      {% endif %}
     </nav>
-    
   </header>
 
   <main class="result">
-    <h2>{{ county.name }} Overview</h2>
 
-    <div class="overall">
-      <div class="overall__score">
-        <div class="badge">{{ county.overall_score }}</div>
-        <p>Overall Score (out of 100)</p>
+    <!-- Hero: title + score left, map right -->
+    <div class="result-hero">
+      <div class="result-hero-left">
+        <h2>{{ county.name }} Overview</h2>
+        <div class="overall__score">
+          <div class="badge">{{ county.overall_score }}</div>
+          <div class="stars">
+            {% set score = county.overall_score %}
+            {% for i in range(1, 6) %}
+              {% if score >= i %}⭐{% else %}☆{% endif %}
+            {% endfor %}
+          </div>
+          <p>Overall Score (out of 5)</p>
+        </div>
       </div>
-    </div>
-
-    <!-- CATEGORY CARDS -->
-    <section class="grid-2">
-      <!-- Weather -->
-      <article class="panel">
-        <h3>Weather</h3>
-        <ul>
-          <li>Average Summer Temperature: {{ county.summerTemp }} °F</li>
-          <li>Average Winter Temperature: {{ county.winterTemp }} °F</li>
-        </ul>
-      </article>
-
-      <!-- Cost of living -->
-      <article class="panel">
-        <h3>Average Cost of Living</h3>
-        <ul>
-          <li>Estimated monthly cost: ${{ county.averageCostOfLiving }}/month</li>
-        </ul>
-      </article>
-
-      <!-- Crime & Safety -->
-      <article class="panel">
-        <h3>Crime &amp; Safety</h3>
-        <ul>
-          <li>Crime &amp; Safety Level: {{ county.crimeSafety }}</li>
-        </ul>
-      </article>
-
-      <!-- School Quality -->
-      <article class="panel">
-        <h3>School Quality</h3>
-        <ul>
-          <li>Overall School Quality: {{ county.schoolQuality }}</li>
-        </ul>
-      </article>
-
-      <!-- Overall diversity percent -->
-      <article class="panel">
-        <h3>Diversity (Race Breakdown (%))</h3>
-        <ul>
-          <li>White: {{ county.race.white }}%</li>
-          <li>Black or African American: {{ county.race.black }}%</li>
-          <li>Hispanic / Latino: {{ county.race.hispanic }}%</li>
-          <li>Asian: {{ county.race.asian }}%</li>
-          <li>American Indian: {{ county.race.american_indian }}%</li>
-          <li>Native Hawaiian / Pacific Islander: {{ county.race.native_hawaiian }}%</li>
-          <li>Multiracial: {{ county.race.multiracial }}%</li>
-        </ul>
-      </article>
-
-
-      <!-- Google Map panel -->
-      <article class="panel map-panel">
-        <h3>Location on Map</h3>
-        <!-- store the data in attributes instead of inside JS -->
+      <div class="result-hero-map">
         <div
           id="map"
           data-lat="{{ county.lat }}"
           data-lng="{{ county.lng }}"
           data-county-name="{{ county.name }}"
         ></div>
-      </article>
-    </section>
+      </div>
+    </div>
+
+    <!-- Data cards -->
+    <div class="result-cards">
+
+        <!-- Weather -->
+        <article class="panel">
+          <h3>🌤️ Weather</h3>
+          <ul>
+            <li>Average Summer Temperature: <strong>{{ county.summerTemp }}°F</strong></li>
+            <li>Average Winter Temperature: <strong>{{ county.winterTemp }}°F</strong></li>
+          </ul>
+        </article>
+
+        <!-- Cost of living -->
+        <article class="panel">
+          <h3>💰 Cost of Living</h3>
+          <ul>
+            <li>Estimated monthly cost: <strong>${{ county.averageCostOfLiving }}/month</strong></li>
+          </ul>
+        </article>
+
+        <!-- Crime & Safety -->
+        <article class="panel">
+          <h3>🛡️ Crime &amp; Safety</h3>
+          <ul>
+            <li>Safety Level:
+              {% if county.crimeSafety == "Low" %}
+                <span class="badge-pill pill-low">Low Crime</span>
+              {% elif county.crimeSafety == "Medium" %}
+                <span class="badge-pill pill-medium">Medium</span>
+              {% else %}
+                <span class="badge-pill pill-high-crime">High Crime</span>
+              {% endif %}
+            </li>
+          </ul>
+          {% if county.crime_explanation %}
+            <button class="expand-btn" onclick="toggleExplanation(this)">More info ▾</button>
+            <p class="explanation hidden">{{ county.crime_explanation }}</p>
+          {% endif %}
+        </article>
+
+        <!-- School Quality -->
+        <article class="panel">
+          <h3>🎓 School Quality</h3>
+          <ul>
+            <li>Overall Quality:
+              {% if county.schoolQuality == "High" %}
+                <span class="badge-pill pill-low">High</span>
+              {% elif county.schoolQuality == "Medium" %}
+                <span class="badge-pill pill-medium">Medium</span>
+              {% else %}
+                <span class="badge-pill pill-high-crime">Low</span>
+              {% endif %}
+            </li>
+          </ul>
+          {% if county.school_explanation %}
+            <button class="expand-btn" onclick="toggleExplanation(this)">More info ▾</button>
+            <p class="explanation hidden">{{ county.school_explanation }}</p>
+          {% endif %}
+        </article>
+
+        <!-- Diversity -->
+        <article class="panel">
+          <h3>🌍 Diversity</h3>
+          <ul>
+            <li>Diversity Level:
+              {% if county.diversityPercent > 40 %}
+                <span class="badge-pill pill-low">High</span>
+              {% elif county.diversityPercent > 20 %}
+                <span class="badge-pill pill-medium">Medium</span>
+              {% else %}
+                <span class="badge-pill pill-neutral">Low</span>
+              {% endif %}
+            </li>
+          </ul>
+          <button class="expand-btn" onclick="toggleExplanation(this)">More info ▾</button>
+          <div class="explanation hidden">
+            <ul>
+              <li>White: <strong>{{ county.race.white }}%</strong></li>
+              <li>Black or African American: <strong>{{ county.race.black }}%</strong></li>
+              <li>Hispanic / Latino: <strong>{{ county.race.hispanic }}%</strong></li>
+              <li>Asian: <strong>{{ county.race.asian }}%</strong></li>
+              <li>American Indian: <strong>{{ county.race.american_indian }}%</strong></li>
+              <li>Native Hawaiian / Pacific Islander: <strong>{{ county.race.native_hawaiian }}%</strong></li>
+              <li>Multiracial: <strong>{{ county.race.multiracial }}%</strong></li>
+            </ul>
+          </div>
+        </article>
+
+      </div>
+
   </main>
 
-  <footer>
-    © 2025 Settle Smart · Smarter Choices Better Places
-  </footer>
+  <footer>© 2025 Settle Smart · Smarter Choices Better Places</footer>
 
-  <!-- Map init script using the selected county -->
+  <a href="/assistant" class="ai-fab">
+    <span class="fab-icon">🤖</span> Ask AI
+  </a>
+
   <script>
-    function initMap() {
-      const mapDiv = document.getElementById("map");
-
-      // Read values from data-attributes (they come in as strings)
-      const lat = parseFloat(mapDiv.dataset.lat);
-      const lng = parseFloat(mapDiv.dataset.lng);
-      const countyName = mapDiv.dataset.countyName || "Selected County";
-
-      const countyCenter = { lat: lat, lng: lng };
-
-      const map = new google.maps.Map(mapDiv, {
-        center: countyCenter,
-        zoom: 8
-      });
-
-      new google.maps.Marker({
-        position: countyCenter,
-        map: map,
-        title: countyName
-      });
+    function toggleExplanation(btn) {
+      const el = btn.nextElementSibling;
+      const open = !el.classList.contains("hidden");
+      el.classList.toggle("hidden", open);
+      btn.textContent = open ? "More info ▾" : "Less info ▴";
     }
   </script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const mapDiv = document.getElementById("map");
+    const lat = parseFloat(mapDiv.dataset.lat);
+    const lng = parseFloat(mapDiv.dataset.lng);
+    const countyName = mapDiv.dataset.countyName || "Selected County";
 
-  <!-- 🔑 Simple Google Maps JS API loader – put YOUR REAL API KEY below -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDv7CKrmFpZfe-NFNQyy-PpKQQcVYLXUdY&callback=initMap"></script>
+    const map = L.map("map").setView([lat, lng], 9);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.marker([lat, lng]).addTo(map).bindPopup(countyName).openPopup();
+  </script>
 </body>
 </html>

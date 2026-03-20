@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Explore Counties · Settle Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
+      <div class="brand-text">
+        <span class="title">Settle Smart</span>
+        <span class="tagline">Smarter Choices • Better Places</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/explore">Explore</a>
+      <a href="/compare">Compare</a>
+      {% if current_user.is_authenticated %}
+        <span class="nav-divider">|</span>
+        <a href="/history">History</a>
+        <a href="/logout" class="nav-auth">Logout</a>
+      {% else %}
+        <span class="nav-divider">|</span>
+        <a href="/login" class="nav-auth">Log In</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="explore-page">
+
+    <!-- Top: form + intro -->
+    <section class="explore-split">
+      <div class="explore-left">
+        <p class="hero-eyebrow">County Explorer</p>
+        <h1>Find your perfect<br>Maryland county</h1>
+        <p class="explore-desc">Pick any of Maryland's 24 counties to get a full breakdown of what life there actually looks like — before you commit to a move.</p>
+        <ul class="explore-checklist">
+          <li>☀️ Summer &amp; winter temperatures</li>
+          <li>💰 Monthly cost of living estimate</li>
+          <li>🛡️ Crime &amp; safety rating with context</li>
+          <li>🎓 School district quality &amp; details</li>
+          <li>🌍 Full racial &amp; ethnic breakdown</li>
+          <li>📍 Interactive map</li>
+          <li>🤖 AI assistant for follow-up questions</li>
+        </ul>
+      </div>
+
+      <div class="explore-right">
+        <form method="post" action="/result" class="explore-form" id="exploreForm">
+          <h2>Select a county</h2>
+          {% if error %}
+            <p class="error">{{ error }}</p>
+          {% endif %}
+          <label for="county-select">Maryland county</label>
+          <select id="county-select" name="county" required>
+            <option value="">-- Choose a county --</option>
+            {% for county in counties %}
+              <option value="{{ county }}">{{ county }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Get Insights →</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Stats banner -->
+    <section class="explore-banner">
+      <div class="banner-stat"><span>24</span>Counties covered</div>
+      <div class="banner-divider"></div>
+      <div class="banner-stat"><span>5</span>Data categories</div>
+      <div class="banner-divider"></div>
+      <div class="banner-stat"><span>1</span>Easy search</div>
+    </section>
+
+  </main>
+
+  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+
+  <a href="/assistant" class="ai-fab">
+    <span class="fab-icon">🤖</span> Ask AI
+  </a>
+
+</body>
+</html>

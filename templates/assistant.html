@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Assistant · Settle Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
+      <div class="brand-text">
+        <span class="title">Settle Smart</span>
+        <span class="tagline">Smarter Choices • Better Places</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/explore">Explore</a>
+      <a href="/compare">Compare</a>
+      {% if current_user.is_authenticated %}
+        <span class="nav-divider">|</span>
+        <a href="/history">History</a>
+        <a href="/logout" class="nav-auth">Logout</a>
+      {% else %}
+        <span class="nav-divider">|</span>
+        <a href="/login" class="nav-auth">Log In</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="assistant-page">
+    <div class="assistant-layout">
+
+      <!-- Left: info panel -->
+      <aside class="assistant-sidebar">
+        <div class="assistant-avatar">🤖</div>
+        <h2>Settle Smart Assistant</h2>
+        <p>Ask me anything about Maryland counties — safety, cost of living, schools, weather, diversity, and more.</p>
+
+        <div class="suggestion-list">
+          <p class="suggestion-label">Try asking:</p>
+          <button class="suggestion" data-q="Which county is the safest in Maryland?">Which county is the safest?</button>
+          <button class="suggestion" data-q="Which county has the best schools?">Which has the best schools?</button>
+          <button class="suggestion" data-q="What is the most affordable county?">Most affordable county?</button>
+          <button class="suggestion" data-q="Compare Howard County and Montgomery County">Compare Howard &amp; Montgomery</button>
+          <button class="suggestion" data-q="Which county is best for families?">Best county for families?</button>
+          <button class="suggestion" data-q="Which county has the most diversity?">Most diverse county?</button>
+        </div>
+      </aside>
+
+      <!-- Right: chat window -->
+      <section class="assistant-chat">
+        <div class="chat-box full" id="chatBox">
+          <div class="chat-msg bot">
+            Hi! I'm your Settle Smart assistant. I know all 24 Maryland counties inside and out. Ask me anything about where to live — safety, schools, cost of living, weather, or diversity.
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Ask a question about Maryland counties…" autocomplete="off" />
+          <button class="chat-send" id="chatSend">Send</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+
+  <script>
+    const chatBox   = document.getElementById("chatBox");
+    const chatInput = document.getElementById("chatInput");
+    const chatSend  = document.getElementById("chatSend");
+    const history   = [];
+
+    function appendMsg(text, role) {
+      const div = document.createElement("div");
+      div.className = "chat-msg " + role;
+      div.textContent = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendChat(msg) {
+      msg = msg || chatInput.value.trim();
+      if (!msg) return;
+      appendMsg(msg, "user");
+      history.push({ role: "user", content: msg });
+      chatInput.value = "";
+      chatSend.disabled = true;
+
+      const typing = document.createElement("div");
+      typing.className = "chat-msg bot typing";
+      typing.textContent = "…";
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg, county: "", history })
+        });
+        const data = await res.json();
+        typing.remove();
+        appendMsg(data.reply, "bot");
+        history.push({ role: "assistant", content: data.reply });
+      } catch {
+        typing.remove();
+        appendMsg("Sorry, something went wrong. Please try again.", "bot");
+      }
+      chatSend.disabled = false;
+      chatInput.focus();
+    }
+
+    chatSend.addEventListener("click", () => sendChat());
+    chatInput.addEventListener("keydown", e => { if (e.key === "Enter") sendChat(); });
+
+    document.querySelectorAll(".suggestion").forEach(btn => {
+      btn.addEventListener("click", () => sendChat(btn.dataset.q));
+    });
+  </script>
+
+</body>
+</html>

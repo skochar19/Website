@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Search History · Settle Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
+      <div class="brand-text">
+        <span class="title">Settle Smart</span>
+        <span class="tagline">Smarter Choices • Better Places</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/explore">Explore</a>
+      <a href="/compare">Compare</a>
+      {% if current_user.is_authenticated %}
+        <span class="nav-divider">|</span>
+        <a href="/history">History</a>
+        <a href="/logout" class="nav-auth">Logout</a>
+      {% else %}
+        <span class="nav-divider">|</span>
+        <a href="/login" class="nav-auth">Log In</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="history-page">
+    <div class="history-wrapper">
+      <h2>Your Activity History</h2>
+      <p class="auth-sub">Everything you've explored, compared, and asked</p>
+
+      <!-- Tabs -->
+      <div class="history-tabs">
+        <button class="htab active" data-tab="explore">🔍 Explore</button>
+        <button class="htab" data-tab="compare">⚖️ Compare</button>
+        <button class="htab" data-tab="chat">🤖 AI Chat</button>
+      </div>
+
+      <!-- Explore tab -->
+      <div class="htab-panel" id="tab-explore">
+        {% if explore_rows %}
+          <ul class="history-list">
+            {% for row in explore_rows %}
+              <li class="history-item">
+                <span class="history-county">{{ row.county_name }}</span>
+                <span class="history-date">{{ row.searched_at[:16] }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="history-empty">
+            <p>No explore history yet. <a href="/explore">Explore a county</a> to get started.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Compare tab -->
+      <div class="htab-panel hidden" id="tab-compare">
+        {% if compare_rows %}
+          <ul class="history-list">
+            {% for row in compare_rows %}
+              <li class="history-item">
+                <span class="history-county">{{ row.county1 }} <span class="vs-tag">vs</span> {{ row.county2 }}</span>
+                <span class="history-date">{{ row.searched_at[:16] }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="history-empty">
+            <p>No compare history yet. <a href="/compare">Compare two counties</a>.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Chat tab -->
+      <div class="htab-panel hidden" id="tab-chat">
+        {% if chat_rows %}
+          <div class="chat-history-list">
+            {% for row in chat_rows %}
+              <div class="chat-history-item">
+                <div class="ch-user"><span class="ch-label">You</span>{{ row.user_message }}</div>
+                <div class="ch-bot"><span class="ch-label">AI</span>{{ row.bot_reply }}</div>
+                <div class="ch-time">{{ row.sent_at[:16] }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="history-empty">
+            <p>No chat history yet. <a href="/assistant">Ask the AI assistant</a> something.</p>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </main>
+
+  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+
+  <a href="/assistant" class="ai-fab">
+    <span class="fab-icon">🤖</span> Ask AI
+  </a>
+
+  <script>
+    const tabs = document.querySelectorAll(".htab");
+    const panels = document.querySelectorAll(".htab-panel");
+
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        panels.forEach(p => p.classList.add("hidden"));
+        btn.classList.add("active");
+        document.getElementById("tab-" + btn.dataset.tab).classList.remove("hidden");
+      });
+    });
+  </script>
+
+</body>
+</html>

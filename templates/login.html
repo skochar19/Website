@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Log In · Settle Smart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
+      <div class="brand-text">
+        <span class="title">Settle Smart</span>
+        <span class="tagline">Smarter Choices • Better Places</span>
+      </div>
+    </a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/explore">Explore</a>
+      <a href="/compare">Compare</a>
+    </nav>
+  </header>
+
+  <main class="auth-page">
+    <div class="auth-card">
+      <h2>Welcome Back</h2>
+      <p class="auth-sub">Log in to access your search history</p>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="post" class="auth-form">
+        <label for="username">Username or Email</label>
+        <input type="text" id="username" name="username" placeholder="Enter your username or email" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required />
+
+        <div class="remember-row">
+          <label class="checkbox-label">
+            <input type="checkbox" name="remember" />
+            <span>Remember me</span>
+          </label>
+        </div>
+
+        <button type="submit">Log In</button>
+      </form>
+
+      <p class="auth-switch">Don't have an account? <a href="/signup">Sign up</a></p>
+    </div>
+  </main>
+
+  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+
+</body>
+</html>

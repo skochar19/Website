@@ -7,7 +7,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <!-- Top bar -->
+
+  <!-- ── Header ── -->
   <header>
     <a href="/" class="brand">
       <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
@@ -16,64 +17,89 @@
         <span class="tagline">Smarter Choices • Better Places</span>
       </div>
     </a>
-
     <nav class="nav-links">
       <a href="/">Home</a>
+      <a href="/explore">Explore</a>
       <a href="/compare">Compare</a>
+      {% if current_user.is_authenticated %}
+        <span class="nav-divider">|</span>
+        <a href="/history">History</a>
+        <a href="/logout" class="nav-auth">Logout</a>
+      {% else %}
+        <span class="nav-divider">|</span>
+        <a href="/login" class="nav-auth">Log In</a>
+      {% endif %}
     </nav>
-    
   </header>
 
-  <!-- Hero -->
+  <!-- ── Hero ── -->
   <section class="hero">
     <div class="hero-inner">
-      <!-- Search card -->
-      <form method="post" action="/result" class="search-card">
-        <h2>Discover insights in Maryland before you move!</h2>
+      <p class="hero-eyebrow">Maryland County Explorer</p>
+      <h1 class="hero-title">Find the right county<br>before you move.</h1>
+      <p class="hero-sub">Get real insights on weather, cost of living, safety, schools, and diversity — all in one place.</p>
+      <a href="/explore" class="hero-cta">Explore Counties →</a>
+    </div>
+  </section>
 
-        {% if error %}
-          <p class="error">{{ error }}</p>
-        {% endif %}
-
-        <label for="county-select">Select a Maryland county:</label>
-        <select id="county-select" name="county" required>
-          <option value="">-- Choose a county --</option>
-          {% for county in counties %}
-            <option value="{{ county }}">{{ county }}</option>
-          {% endfor %}
-        </select>
-
-        <br><br>
-        <button type="submit">Get Insights</button>
-      </form>
-
-      <!-- Quick gallery -->
-      <div class="gallery">
+  <!-- ── Photo showcase ── -->
+  <section class="showcase">
+    <div class="showcase-inner">
+      <div class="showcase-img tall">
         <img src="https://images.unsplash.com/photo-1460472178825-e5240623afd5?q=80&w=1200&auto=format&fit=crop" alt="City skyline" />
+        <div class="showcase-label">Urban Living</div>
+      </div>
+      <div class="showcase-img">
         <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1200&auto=format&fit=crop" alt="Neighborhood street" />
+        <div class="showcase-label">Quiet Suburbs</div>
+      </div>
+      <div class="showcase-img">
         <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop" alt="Parks and trails" />
+        <div class="showcase-label">Parks &amp; Nature</div>
       </div>
     </div>
   </section>
 
-  <!-- Feature categories (what we score) -->
+  <!-- ── What we analyze ── -->
   <section class="features">
-    <h3>What we analyze</h3>
-    <div class="grid">
-      <div class="feature-card">Weather</div>
-      <div class="feature-card">Cost of Living</div>
-      <div class="feature-card">Crime and Safety</div>
-      <div class="feature-card">School District Quality</div>
-      <div class="feature-card">Racial Diversity</div>
+    <div class="features-inner">
+      <h2>What we analyze</h2>
+      <p class="features-sub">Every county is scored across five key factors so you can make an informed decision.</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <span class="icon">🌤️</span>
+          <strong>Weather</strong>
+          <span>Summer &amp; winter temperatures</span>
+        </div>
+        <div class="feature-card">
+          <span class="icon">💰</span>
+          <strong>Cost of Living</strong>
+          <span>Monthly housing &amp; living estimates</span>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🛡️</span>
+          <strong>Crime &amp; Safety</strong>
+          <span>County-level safety ratings</span>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🎓</span>
+          <strong>School Quality</strong>
+          <span>District performance &amp; rankings</span>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🌍</span>
+          <strong>Diversity</strong>
+          <span>Full racial &amp; ethnic breakdown</span>
+        </div>
+      </div>
     </div>
   </section>
-  
 
-  <footer>
-    © 2025 Settle Smart | Smarter Choices Better Places
-  </footer>
+  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
 
-  <!-- JS not strictly needed, but included for future enhancements -->
-  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  <a href="/assistant" class="ai-fab">
+    <span class="fab-icon">🤖</span> Ask AI
+  </a>
+
 </body>
 </html>
