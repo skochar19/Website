@@ -27,146 +27,58 @@
     </nav>
   </header>
 
-  <main class="compare {% if not (county1 and county2) %}compare-centered{% endif %}">
+  <main class="compare compare-centered">
 
     <!-- Form -->
     <section class="compare-hero">
       <p class="hero-eyebrow">Side-by-Side Comparison</p>
       <h2>Compare any two Maryland counties</h2>
+      <p class="compare-hero-sub">Pick two counties and get an instant breakdown across safety, schools, cost, weather, and diversity.</p>
+
       <form class="compare__form" method="post">
-        <label>
-          County 1
-          <select name="county1" required>
-            <option value="">-- Choose a county --</option>
-            {% for c in counties %}
-              <option value="{{ c }}" {% if county1_name == c %}selected{% endif %}>{{ c }}</option>
-            {% endfor %}
-          </select>
-        </label>
-        <div class="vs-badge">VS</div>
-        <label>
-          County 2
-          <select name="county2" required>
-            <option value="">-- Choose a county --</option>
-            {% for c in counties %}
-              <option value="{{ c }}" {% if county2_name == c %}selected{% endif %}>{{ c }}</option>
-            {% endfor %}
-          </select>
-        </label>
-        <button type="submit">Compare →</button>
+        <div class="compare-pick-row">
+
+          <div class="compare-pick-card">
+
+            <div class="pick-card-label">First County</div>
+            <select name="county1" required>
+              <option value="">-- Choose a county --</option>
+              {% for c in counties %}
+                <option value="{{ c }}" {% if county1_name == c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="vs-badge">VS</div>
+
+          <div class="compare-pick-card">
+
+            <div class="pick-card-label">Second County</div>
+            <select name="county2" required>
+              <option value="">-- Choose a county --</option>
+              {% for c in counties %}
+                <option value="{{ c }}" {% if county2_name == c %}selected{% endif %}>{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+        </div>
+
+        <button type="submit" class="compare-submit-btn">Compare Counties →</button>
       </form>
+
+      {% if not (county1 and county2) %}
+      <div class="compare-categories">
+        <span>⭐ Overall Score</span>
+        <span>💰 Cost of Living</span>
+        <span>🛡️ Crime &amp; Safety</span>
+        <span>🎓 School Quality</span>
+        <span>☀️ Weather</span>
+        <span>🌍 Diversity</span>
+      </div>
+      {% endif %}
     </section>
 
-    {% if county1 and county2 %}
-
-    <p class="compare-legend">🟢 Green = better value for that category</p>
-
-    <!-- County name headers -->
-    <div class="compare-header-row">
-      <div class="compare-county-title">{{ county1.name }}</div>
-      <div class="compare-center-label"></div>
-      <div class="compare-county-title">{{ county2.name }}</div>
-    </div>
-
-    <!-- Comparison rows -->
-    <div class="compare-table">
-
-      <!-- Overall Score -->
-      <div class="compare-row">
-        <div class="compare-cell left {% if county1.overall_score > county2.overall_score %}winner{% elif county1.overall_score < county2.overall_score %}loser{% endif %}">
-          <span class="cmp-val">{{ county1.overall_score }}</span>
-          <span class="cmp-stars">
-            {% for i in range(1,6) %}{% if county1.overall_score >= i %}⭐{% else %}☆{% endif %}{% endfor %}
-          </span>
-        </div>
-        <div class="compare-label">⭐ Overall Score</div>
-        <div class="compare-cell right {% if county2.overall_score > county1.overall_score %}winner{% elif county2.overall_score < county1.overall_score %}loser{% endif %}">
-          <span class="cmp-val">{{ county2.overall_score }}</span>
-          <span class="cmp-stars">
-            {% for i in range(1,6) %}{% if county2.overall_score >= i %}⭐{% else %}☆{% endif %}{% endfor %}
-          </span>
-        </div>
-      </div>
-
-      <!-- Cost of Living (lower is better) -->
-      <div class="compare-row">
-        <div class="compare-cell left {% if county1.averageCostOfLiving < county2.averageCostOfLiving %}winner{% elif county1.averageCostOfLiving > county2.averageCostOfLiving %}loser{% endif %}">
-          <span class="cmp-val">${{ county1.averageCostOfLiving }}<span class="cmp-unit">/mo</span></span>
-        </div>
-        <div class="compare-label">💰 Cost of Living</div>
-        <div class="compare-cell right {% if county2.averageCostOfLiving < county1.averageCostOfLiving %}winner{% elif county2.averageCostOfLiving > county1.averageCostOfLiving %}loser{% endif %}">
-          <span class="cmp-val">${{ county2.averageCostOfLiving }}<span class="cmp-unit">/mo</span></span>
-        </div>
-      </div>
-
-      <!-- Summer Temp -->
-      <div class="compare-row">
-        <div class="compare-cell left">
-          <span class="cmp-val">{{ county1.summerTemp }}°F</span>
-        </div>
-        <div class="compare-label">☀️ Summer Temp</div>
-        <div class="compare-cell right">
-          <span class="cmp-val">{{ county2.summerTemp }}°F</span>
-        </div>
-      </div>
-
-      <!-- Winter Temp -->
-      <div class="compare-row">
-        <div class="compare-cell left">
-          <span class="cmp-val">{{ county1.winterTemp }}°F</span>
-        </div>
-        <div class="compare-label">❄️ Winter Temp</div>
-        <div class="compare-cell right">
-          <span class="cmp-val">{{ county2.winterTemp }}°F</span>
-        </div>
-      </div>
-
-      <!-- Crime & Safety -->
-      {% set crime_order = {"Low": 1, "Medium": 2, "High": 3} %}
-      <div class="compare-row">
-        <div class="compare-cell left {% if crime_order[county1.crimeSafety] < crime_order[county2.crimeSafety] %}winner{% elif crime_order[county1.crimeSafety] > crime_order[county2.crimeSafety] %}loser{% endif %}">
-          {% if county1.crimeSafety == "Low" %}<span class="badge-pill pill-low">Low Crime</span>
-          {% elif county1.crimeSafety == "Medium" %}<span class="badge-pill pill-medium">Medium</span>
-          {% else %}<span class="badge-pill pill-high-crime">High Crime</span>{% endif %}
-        </div>
-        <div class="compare-label">🛡️ Crime &amp; Safety</div>
-        <div class="compare-cell right {% if crime_order[county2.crimeSafety] < crime_order[county1.crimeSafety] %}winner{% elif crime_order[county2.crimeSafety] > crime_order[county1.crimeSafety] %}loser{% endif %}">
-          {% if county2.crimeSafety == "Low" %}<span class="badge-pill pill-low">Low Crime</span>
-          {% elif county2.crimeSafety == "Medium" %}<span class="badge-pill pill-medium">Medium</span>
-          {% else %}<span class="badge-pill pill-high-crime">High Crime</span>{% endif %}
-        </div>
-      </div>
-
-      <!-- School Quality -->
-      {% set school_order = {"High": 1, "Medium": 2, "Low": 3} %}
-      <div class="compare-row">
-        <div class="compare-cell left {% if school_order[county1.schoolQuality] < school_order[county2.schoolQuality] %}winner{% elif school_order[county1.schoolQuality] > school_order[county2.schoolQuality] %}loser{% endif %}">
-          {% if county1.schoolQuality == "High" %}<span class="badge-pill pill-low">High</span>
-          {% elif county1.schoolQuality == "Medium" %}<span class="badge-pill pill-medium">Medium</span>
-          {% else %}<span class="badge-pill pill-high-crime">Low</span>{% endif %}
-        </div>
-        <div class="compare-label">🎓 School Quality</div>
-        <div class="compare-cell right {% if school_order[county2.schoolQuality] < school_order[county1.schoolQuality] %}winner{% elif school_order[county2.schoolQuality] > school_order[county1.schoolQuality] %}loser{% endif %}">
-          {% if county2.schoolQuality == "High" %}<span class="badge-pill pill-low">High</span>
-          {% elif county2.schoolQuality == "Medium" %}<span class="badge-pill pill-medium">Medium</span>
-          {% else %}<span class="badge-pill pill-high-crime">Low</span>{% endif %}
-        </div>
-      </div>
-
-      <!-- Diversity -->
-      <div class="compare-row">
-        <div class="compare-cell left {% if county1.diversityPercent > county2.diversityPercent %}winner{% elif county1.diversityPercent < county2.diversityPercent %}loser{% endif %}">
-          <span class="cmp-val">{{ county1.diversityPercent }}<span class="cmp-unit">%</span></span>
-        </div>
-        <div class="compare-label">🌍 Diversity (POC)</div>
-        <div class="compare-cell right {% if county2.diversityPercent > county1.diversityPercent %}winner{% elif county2.diversityPercent < county1.diversityPercent %}loser{% endif %}">
-          <span class="cmp-val">{{ county2.diversityPercent }}<span class="cmp-unit">%</span></span>
-        </div>
-      </div>
-
-    </div>
-
-    {% endif %}
   </main>
 
   <footer>© 2025 Settle Smart · Smarter Choices Better Places</footer>

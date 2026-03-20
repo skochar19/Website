@@ -371,18 +371,23 @@ def compare():
     if county1_name: county1 = get_county_overview(county1_name)
     if county2_name: county2 = get_county_overview(county2_name)
 
-    if request.method == "POST" and current_user.is_authenticated and county1_name and county2_name:
-        conn = get_db()
-        conn.execute(
-            "INSERT INTO compare_history (user_id, county1, county2) VALUES (?, ?, ?)",
-            (current_user.id, county1_name, county2_name),
+    if county1 and county2:
+        if request.method == "POST" and current_user.is_authenticated:
+            conn = get_db()
+            conn.execute(
+                "INSERT INTO compare_history (user_id, county1, county2) VALUES (?, ?, ?)",
+                (current_user.id, county1_name, county2_name),
+            )
+            conn.commit()
+            conn.close()
+        return render_template(
+            "compare_result.html",
+            county1=county1, county2=county2,
         )
-        conn.commit()
-        conn.close()
+
     return render_template(
         "compare.html",
         counties=get_all_county_names(),
-        county1=county1, county2=county2,
         county1_name=county1_name, county2_name=county2_name,
     )
 
