@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8" />
   <title>Log In · Settle Smart</title>
@@ -17,16 +17,24 @@
       </div>
     </a>
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/explore">Explore</a>
-      <a href="/compare">Compare</a>
+      <div class="lang-toggle">
+        {% if lang == 'en' %}
+          <a href="/set-lang/es" class="lang-btn" title="Español">🇪🇸</a>
+        {% else %}
+          <a href="/set-lang/en" class="lang-btn" title="English">🇺🇸</a>
+        {% endif %}
+      </div>
+      <span class="nav-divider">|</span>
+      <a href="/">{{ t.nav_home }}</a>
+      <a href="/explore">{{ t.nav_explore }}</a>
+      <a href="/compare">{{ t.nav_compare }}</a>
     </nav>
   </header>
 
   <main class="auth-page">
     <div class="auth-card">
-      <h2>Welcome Back</h2>
-      <p class="auth-sub">Log in to access your search history</p>
+      <h2>{{ t.login_title }}</h2>
+      <p class="auth-sub">{{ t.login_sub }}</p>
 
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% for category, message in messages %}
@@ -35,27 +43,27 @@
       {% endwith %}
 
       <form method="post" class="auth-form">
-        <label for="username">Username or Email</label>
-        <input type="text" id="username" name="username" placeholder="Enter your username or email" required />
+        <label for="username">{{ t.login_user_label }}</label>
+        <input type="text" id="username" name="username" placeholder="{{ t.login_user_placeholder }}" required />
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        <label for="password">{{ t.login_pass_label }}</label>
+        <input type="password" id="password" name="password" placeholder="{{ t.login_pass_placeholder }}" required />
 
         <div class="remember-row">
           <label class="checkbox-label">
             <input type="checkbox" name="remember" />
-            <span>Remember me</span>
+            <span>{{ t.login_remember }}</span>
           </label>
         </div>
 
-        <button type="submit">Log In</button>
+        <button type="submit">{{ t.login_btn }}</button>
       </form>
 
-      <p class="auth-switch">Don't have an account? <a href="/signup">Sign up</a></p>
+      <p class="auth-switch">{{ t.login_switch }} <a href="/signup">{{ t.login_switch_link }}</a></p>
     </div>
   </main>
 
-  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+  <footer>{{ t.footer }}</footer>
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -14,26 +14,33 @@
       <h1>Settle Smart</h1>
     </div>
     <nav class="nav-links">
-      <a href="/" class="backlink">Home</a>
-      <a href="/explore" class="backlink">Explore</a>
-      <a href="/compare" class="backlink">Compare</a>
+      <div class="lang-toggle">
+        {% if lang == 'en' %}
+          <a href="/set-lang/es" class="lang-btn" title="Español">🇪🇸</a>
+        {% else %}
+          <a href="/set-lang/en" class="lang-btn" title="English">🇺🇸</a>
+        {% endif %}
+      </div>
+      <span class="nav-divider">|</span>
+      <a href="/" class="backlink">{{ t.nav_home }}</a>
+      <a href="/explore" class="backlink">{{ t.nav_explore }}</a>
+      <a href="/compare" class="backlink">{{ t.nav_compare }}</a>
       {% if current_user.is_authenticated %}
         <span class="nav-divider">|</span>
-        <a href="/history" class="backlink">History</a>
-        <a href="/logout" class="backlink nav-auth">Logout</a>
+        <a href="/history" class="backlink">{{ t.nav_history }}</a>
+        <a href="/logout" class="backlink nav-auth">{{ t.nav_logout }}</a>
       {% else %}
         <span class="nav-divider">|</span>
-        <a href="/login" class="backlink nav-auth">Log In</a>
+        <a href="/login" class="backlink nav-auth">{{ t.nav_login }}</a>
       {% endif %}
     </nav>
   </header>
 
   <main class="result">
 
-    <!-- Hero: title + score left, map right -->
     <div class="result-hero">
       <div class="result-hero-left">
-        <h2>{{ county.name }} Overview</h2>
+        <h2>{{ county.name }} {{ t.result_overview }}</h2>
         <div class="overall__score">
           <div class="badge">{{ county.overall_score }}</div>
           <div class="stars">
@@ -42,115 +49,104 @@
               {% if score >= i %}⭐{% else %}☆{% endif %}
             {% endfor %}
           </div>
-          <p>Overall Score (out of 5)</p>
+          <p>{{ t.result_score_label }}</p>
         </div>
       </div>
       <div class="result-hero-map">
-        <div
-          id="map"
-          data-lat="{{ county.lat }}"
-          data-lng="{{ county.lng }}"
-          data-county-name="{{ county.name }}"
-        ></div>
+        <div id="map" data-lat="{{ county.lat }}" data-lng="{{ county.lng }}" data-county-name="{{ county.name }}"></div>
       </div>
     </div>
 
-    <!-- Data cards -->
     <div class="result-cards">
 
-        <!-- Weather -->
-        <article class="panel">
-          <h3>🌤️ Weather</h3>
-          <ul>
-            <li>Average Summer Temperature: <strong>{{ county.summerTemp }}°F</strong></li>
-            <li>Average Winter Temperature: <strong>{{ county.winterTemp }}°F</strong></li>
-          </ul>
-        </article>
+      <article class="panel">
+        <h3>{{ t.result_weather }}</h3>
+        <ul>
+          <li>{{ t.result_summer }}: <strong>{{ county.summerTemp }}°F</strong></li>
+          <li>{{ t.result_winter }}: <strong>{{ county.winterTemp }}°F</strong></li>
+        </ul>
+      </article>
 
-        <!-- Cost of living -->
-        <article class="panel">
-          <h3>💰 Cost of Living</h3>
-          <ul>
-            <li>Estimated monthly cost: <strong>${{ county.averageCostOfLiving }}/month</strong></li>
-          </ul>
-        </article>
+      <article class="panel">
+        <h3>{{ t.result_cost }}</h3>
+        <ul>
+          <li>{{ t.result_cost_label }}: <strong>${{ county.averageCostOfLiving }}{{ t.slash_month }}</strong></li>
+        </ul>
+      </article>
 
-        <!-- Crime & Safety -->
-        <article class="panel">
-          <h3>🛡️ Crime &amp; Safety</h3>
-          <ul>
-            <li>Safety Level:
-              {% if county.crimeSafety == "Low" %}
-                <span class="badge-pill pill-low">Low Crime</span>
-              {% elif county.crimeSafety == "Medium" %}
-                <span class="badge-pill pill-medium">Medium</span>
-              {% else %}
-                <span class="badge-pill pill-high-crime">High Crime</span>
-              {% endif %}
-            </li>
-          </ul>
-          {% if county.crime_explanation %}
-            <button class="expand-btn" onclick="toggleExplanation(this)">More info ▾</button>
-            <p class="explanation hidden">{{ county.crime_explanation }}</p>
-          {% endif %}
-        </article>
+      <article class="panel">
+        <h3>{{ t.result_crime }}</h3>
+        <ul>
+          <li>{{ t.result_crime_label }}:
+            {% if county.crimeSafety == "Low" %}
+              <span class="badge-pill pill-low">{{ t.pill_low_crime }}</span>
+            {% elif county.crimeSafety == "Medium" %}
+              <span class="badge-pill pill-medium">{{ t.pill_medium }}</span>
+            {% else %}
+              <span class="badge-pill pill-high-crime">{{ t.pill_high_crime }}</span>
+            {% endif %}
+          </li>
+        </ul>
+        {% if county.crime_explanation %}
+          <button class="expand-btn" data-more="{{ t.result_more_info }}" data-less="{{ t.result_less_info }}" onclick="toggleExplanation(this)">{{ t.result_more_info }}</button>
+          <p class="explanation hidden">{{ county.crime_explanation }}</p>
+        {% endif %}
+      </article>
 
-        <!-- School Quality -->
-        <article class="panel">
-          <h3>🎓 School Quality</h3>
-          <ul>
-            <li>Overall Quality:
-              {% if county.schoolQuality == "High" %}
-                <span class="badge-pill pill-low">High</span>
-              {% elif county.schoolQuality == "Medium" %}
-                <span class="badge-pill pill-medium">Medium</span>
-              {% else %}
-                <span class="badge-pill pill-high-crime">Low</span>
-              {% endif %}
-            </li>
-          </ul>
-          {% if county.school_explanation %}
-            <button class="expand-btn" onclick="toggleExplanation(this)">More info ▾</button>
-            <p class="explanation hidden">{{ county.school_explanation }}</p>
-          {% endif %}
-        </article>
+      <article class="panel">
+        <h3>{{ t.result_school }}</h3>
+        <ul>
+          <li>{{ t.result_school_label }}:
+            {% if county.schoolQuality == "High" %}
+              <span class="badge-pill pill-low">{{ t.pill_high }}</span>
+            {% elif county.schoolQuality == "Medium" %}
+              <span class="badge-pill pill-medium">{{ t.pill_medium }}</span>
+            {% else %}
+              <span class="badge-pill pill-high-crime">{{ t.pill_low }}</span>
+            {% endif %}
+          </li>
+        </ul>
+        {% if county.school_explanation %}
+          <button class="expand-btn" data-more="{{ t.result_more_info }}" data-less="{{ t.result_less_info }}" onclick="toggleExplanation(this)">{{ t.result_more_info }}</button>
+          <p class="explanation hidden">{{ county.school_explanation }}</p>
+        {% endif %}
+      </article>
 
-        <!-- Diversity -->
-        <article class="panel">
-          <h3>🌍 Diversity</h3>
+      <article class="panel">
+        <h3>{{ t.result_diversity }}</h3>
+        <ul>
+          <li>{{ t.result_diversity_label }}:
+            {% if county.diversityPercent > 40 %}
+              <span class="badge-pill pill-low">{{ t.pill_high }}</span>
+            {% elif county.diversityPercent > 20 %}
+              <span class="badge-pill pill-medium">{{ t.pill_medium }}</span>
+            {% else %}
+              <span class="badge-pill pill-neutral">{{ t.pill_low }}</span>
+            {% endif %}
+          </li>
+        </ul>
+        <button class="expand-btn" data-more="{{ t.result_more_info }}" data-less="{{ t.result_less_info }}" onclick="toggleExplanation(this)">{{ t.result_more_info }}</button>
+        <div class="explanation hidden">
           <ul>
-            <li>Diversity Level:
-              {% if county.diversityPercent > 40 %}
-                <span class="badge-pill pill-low">High</span>
-              {% elif county.diversityPercent > 20 %}
-                <span class="badge-pill pill-medium">Medium</span>
-              {% else %}
-                <span class="badge-pill pill-neutral">Low</span>
-              {% endif %}
-            </li>
+            <li>{{ t.diversity_white }}: <strong>{{ county.race.white }}%</strong></li>
+            <li>{{ t.diversity_black }}: <strong>{{ county.race.black }}%</strong></li>
+            <li>{{ t.diversity_hispanic }}: <strong>{{ county.race.hispanic }}%</strong></li>
+            <li>{{ t.diversity_asian }}: <strong>{{ county.race.asian }}%</strong></li>
+            <li>{{ t.diversity_am_indian }}: <strong>{{ county.race.american_indian }}%</strong></li>
+            <li>{{ t.diversity_native_hawaiian }}: <strong>{{ county.race.native_hawaiian }}%</strong></li>
+            <li>{{ t.diversity_multiracial }}: <strong>{{ county.race.multiracial }}%</strong></li>
           </ul>
-          <button class="expand-btn" onclick="toggleExplanation(this)">More info ▾</button>
-          <div class="explanation hidden">
-            <ul>
-              <li>White: <strong>{{ county.race.white }}%</strong></li>
-              <li>Black or African American: <strong>{{ county.race.black }}%</strong></li>
-              <li>Hispanic / Latino: <strong>{{ county.race.hispanic }}%</strong></li>
-              <li>Asian: <strong>{{ county.race.asian }}%</strong></li>
-              <li>American Indian: <strong>{{ county.race.american_indian }}%</strong></li>
-              <li>Native Hawaiian / Pacific Islander: <strong>{{ county.race.native_hawaiian }}%</strong></li>
-              <li>Multiracial: <strong>{{ county.race.multiracial }}%</strong></li>
-            </ul>
-          </div>
-        </article>
+        </div>
+      </article>
 
-      </div>
+    </div>
 
   </main>
 
-  <footer>© 2025 Settle Smart · Smarter Choices Better Places</footer>
+  <footer>{{ t.footer }}</footer>
 
   <a href="/assistant" class="ai-fab">
-    <span class="fab-icon">🤖</span> Ask AI
+    <span class="fab-icon">🤖</span> {{ t.ask_ai }}
   </a>
 
   <script>
@@ -158,7 +154,7 @@
       const el = btn.nextElementSibling;
       const open = !el.classList.contains("hidden");
       el.classList.toggle("hidden", open);
-      btn.textContent = open ? "More info ▾" : "Less info ▴";
+      btn.textContent = open ? btn.dataset.more : btn.dataset.less;
     }
   </script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -167,7 +163,6 @@
     const lat = parseFloat(mapDiv.dataset.lat);
     const lng = parseFloat(mapDiv.dataset.lng);
     const countyName = mapDiv.dataset.countyName || "Selected County";
-
     const map = L.map("map").setView([lat, lng], 9);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -13,36 +13,42 @@
       <h1>Settle Smart</h1>
     </div>
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/explore">Explore</a>
-      <a href="/compare">Compare</a>
+      <div class="lang-toggle">
+        {% if lang == 'en' %}
+          <a href="/set-lang/es" class="lang-btn" title="Español">🇪🇸</a>
+        {% else %}
+          <a href="/set-lang/en" class="lang-btn" title="English">🇺🇸</a>
+        {% endif %}
+      </div>
+      <span class="nav-divider">|</span>
+      <a href="/">{{ t.nav_home }}</a>
+      <a href="/explore">{{ t.nav_explore }}</a>
+      <a href="/compare">{{ t.nav_compare }}</a>
       {% if current_user.is_authenticated %}
         <span class="nav-divider">|</span>
-        <a href="/history">History</a>
-        <a href="/logout" class="nav-auth">Logout</a>
+        <a href="/history">{{ t.nav_history }}</a>
+        <a href="/logout" class="nav-auth">{{ t.nav_logout }}</a>
       {% else %}
         <span class="nav-divider">|</span>
-        <a href="/login" class="nav-auth">Log In</a>
+        <a href="/login" class="nav-auth">{{ t.nav_login }}</a>
       {% endif %}
     </nav>
   </header>
 
   <main class="compare compare-centered">
 
-    <!-- Form -->
     <section class="compare-hero">
-      <p class="hero-eyebrow">Side-by-Side Comparison</p>
-      <h2>Compare any two Maryland counties</h2>
-      <p class="compare-hero-sub">Pick two counties and get an instant breakdown across safety, schools, cost, weather, and diversity.</p>
+      <p class="hero-eyebrow">{{ t.compare_eyebrow }}</p>
+      <h2>{{ t.compare_title }}</h2>
+      <p class="compare-hero-sub">{{ t.compare_sub }}</p>
 
       <form class="compare__form" method="post">
         <div class="compare-pick-row">
 
           <div class="compare-pick-card">
-
-            <div class="pick-card-label">First County</div>
+            <div class="pick-card-label">{{ t.compare_first }}</div>
             <select name="county1" required>
-              <option value="">-- Choose a county --</option>
+              <option value="">{{ t.compare_placeholder }}</option>
               {% for c in counties %}
                 <option value="{{ c }}" {% if county1_name == c %}selected{% endif %}>{{ c }}</option>
               {% endfor %}
@@ -52,10 +58,9 @@
           <div class="vs-badge">VS</div>
 
           <div class="compare-pick-card">
-
-            <div class="pick-card-label">Second County</div>
+            <div class="pick-card-label">{{ t.compare_second }}</div>
             <select name="county2" required>
-              <option value="">-- Choose a county --</option>
+              <option value="">{{ t.compare_placeholder }}</option>
               {% for c in counties %}
                 <option value="{{ c }}" {% if county2_name == c %}selected{% endif %}>{{ c }}</option>
               {% endfor %}
@@ -64,27 +69,25 @@
 
         </div>
 
-        <button type="submit" class="compare-submit-btn">Compare Counties →</button>
+        <button type="submit" class="compare-submit-btn">{{ t.compare_btn }}</button>
       </form>
 
-      {% if not (county1 and county2) %}
       <div class="compare-categories">
-        <span>⭐ Overall Score</span>
-        <span>💰 Cost of Living</span>
-        <span>🛡️ Crime &amp; Safety</span>
-        <span>🎓 School Quality</span>
-        <span>☀️ Weather</span>
-        <span>🌍 Diversity</span>
+        <span>{{ t.cat_overall }}</span>
+        <span>{{ t.cat_cost }}</span>
+        <span>{{ t.cat_crime }}</span>
+        <span>{{ t.cat_school }}</span>
+        <span>{{ t.cat_weather }}</span>
+        <span>{{ t.cat_diversity }}</span>
       </div>
-      {% endif %}
     </section>
 
   </main>
 
-  <footer>© 2025 Settle Smart · Smarter Choices Better Places</footer>
+  <footer>{{ t.footer }}</footer>
 
   <a href="/assistant" class="ai-fab">
-    <span class="fab-icon">🤖</span> Ask AI
+    <span class="fab-icon">🤖</span> {{ t.ask_ai }}
   </a>
 
 </body>

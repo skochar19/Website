@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8" />
   <title>Settle Smart</title>
@@ -8,7 +8,6 @@
 </head>
 <body>
 
-  <!-- ── Header ── -->
   <header>
     <a href="/" class="brand">
       <img src="{{ url_for('static', filename='logo.png') }}" alt="Settle Smart Logo" />
@@ -18,87 +17,92 @@
       </div>
     </a>
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/explore">Explore</a>
-      <a href="/compare">Compare</a>
+      <div class="lang-toggle">
+        {% if lang == 'en' %}
+          <a href="/set-lang/es" class="lang-btn" title="Español">🇪🇸</a>
+        {% else %}
+          <a href="/set-lang/en" class="lang-btn" title="English">🇺🇸</a>
+        {% endif %}
+      </div>
+      <span class="nav-divider">|</span>
+      <a href="/">{{ t.nav_home }}</a>
+      <a href="/explore">{{ t.nav_explore }}</a>
+      <a href="/compare">{{ t.nav_compare }}</a>
       {% if current_user.is_authenticated %}
         <span class="nav-divider">|</span>
-        <a href="/history">History</a>
-        <a href="/logout" class="nav-auth">Logout</a>
+        <a href="/history">{{ t.nav_history }}</a>
+        <a href="/logout" class="nav-auth">{{ t.nav_logout }}</a>
       {% else %}
         <span class="nav-divider">|</span>
-        <a href="/login" class="nav-auth">Log In</a>
+        <a href="/login" class="nav-auth">{{ t.nav_login }}</a>
       {% endif %}
     </nav>
   </header>
 
-  <!-- ── Hero ── -->
   <section class="hero">
     <div class="hero-inner">
-      <p class="hero-eyebrow">Maryland County Explorer</p>
-      <h1 class="hero-title">Find the right county<br>before you move.</h1>
-      <p class="hero-sub">Get real insights on weather, cost of living, safety, schools, and diversity — all in one place.</p>
-      <a href="/explore" class="hero-cta">Explore Counties →</a>
+      <p class="hero-eyebrow">{{ t.index_eyebrow }}</p>
+      <h1 class="hero-title">{{ t.index_title | safe }}</h1>
+      <p class="hero-sub">{{ t.index_sub }}</p>
+      <a href="/explore" class="hero-cta">{{ t.index_cta }}</a>
     </div>
   </section>
 
-  <!-- ── Photo showcase ── -->
   <section class="showcase">
     <div class="showcase-inner">
       <div class="showcase-img tall">
         <img src="https://images.unsplash.com/photo-1460472178825-e5240623afd5?q=80&w=1200&auto=format&fit=crop" alt="City skyline" />
-        <div class="showcase-label">Urban Living</div>
+        <div class="showcase-label">{{ t.urban }}</div>
       </div>
       <div class="showcase-img">
         <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1200&auto=format&fit=crop" alt="Neighborhood street" />
-        <div class="showcase-label">Quiet Suburbs</div>
+        <div class="showcase-label">{{ t.suburb }}</div>
       </div>
       <div class="showcase-img">
         <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop" alt="Parks and trails" />
-        <div class="showcase-label">Parks &amp; Nature</div>
+        <div class="showcase-label">{{ t.nature }}</div>
       </div>
     </div>
   </section>
 
-  <!-- ── What we analyze ── -->
   <section class="features">
     <div class="features-inner">
-      <h2>What we analyze</h2>
-      <p class="features-sub">Every county is scored across five key factors so you can make an informed decision.</p>
+      <h2>{{ t.index_analyze_title }}</h2>
+      <p class="features-sub">{{ t.index_analyze_sub }}</p>
       <div class="feature-grid">
         <div class="feature-card">
           <span class="icon">🌤️</span>
-          <strong>Weather</strong>
-          <span>Summer &amp; winter temperatures</span>
+          <strong>{{ t.feat_weather }}</strong>
+          <span>{{ t.feat_weather_sub }}</span>
         </div>
         <div class="feature-card">
           <span class="icon">💰</span>
-          <strong>Cost of Living</strong>
-          <span>Monthly housing &amp; living estimates</span>
+          <strong>{{ t.feat_cost }}</strong>
+          <span>{{ t.feat_cost_sub }}</span>
         </div>
         <div class="feature-card">
           <span class="icon">🛡️</span>
-          <strong>Crime &amp; Safety</strong>
-          <span>County-level safety ratings</span>
+          <strong>{{ t.feat_crime }}</strong>
+          <span>{{ t.feat_crime_sub }}</span>
         </div>
         <div class="feature-card">
           <span class="icon">🎓</span>
-          <strong>School Quality</strong>
-          <span>District performance &amp; rankings</span>
+          <strong>{{ t.feat_school }}</strong>
+          <span>{{ t.feat_school_sub }}</span>
         </div>
         <div class="feature-card">
           <span class="icon">🌍</span>
-          <strong>Diversity</strong>
-          <span>Full racial &amp; ethnic breakdown</span>
+          <strong>{{ t.feat_diversity }}</strong>
+          <span>{{ t.feat_diversity_sub }}</span>
         </div>
       </div>
     </div>
   </section>
 
-  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+  <footer>{{ t.footer }}</footer>
 
   <a href="/assistant" class="ai-fab">
-    <span class="fab-icon">🤖</span> Ask AI
+    <span class="fab-icon">🤖</span> {{ t.ask_ai }}
   </a>
 
 </body>

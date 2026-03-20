@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8" />
   <title>Explore Counties · Settle Smart</title>
@@ -17,72 +17,78 @@
       </div>
     </a>
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/explore">Explore</a>
-      <a href="/compare">Compare</a>
+      <div class="lang-toggle">
+        {% if lang == 'en' %}
+          <a href="/set-lang/es" class="lang-btn" title="Español">🇪🇸</a>
+        {% else %}
+          <a href="/set-lang/en" class="lang-btn" title="English">🇺🇸</a>
+        {% endif %}
+      </div>
+      <span class="nav-divider">|</span>
+      <a href="/">{{ t.nav_home }}</a>
+      <a href="/explore">{{ t.nav_explore }}</a>
+      <a href="/compare">{{ t.nav_compare }}</a>
       {% if current_user.is_authenticated %}
         <span class="nav-divider">|</span>
-        <a href="/history">History</a>
-        <a href="/logout" class="nav-auth">Logout</a>
+        <a href="/history">{{ t.nav_history }}</a>
+        <a href="/logout" class="nav-auth">{{ t.nav_logout }}</a>
       {% else %}
         <span class="nav-divider">|</span>
-        <a href="/login" class="nav-auth">Log In</a>
+        <a href="/login" class="nav-auth">{{ t.nav_login }}</a>
       {% endif %}
     </nav>
   </header>
 
   <main class="explore-page">
 
-    <!-- Top: form + intro -->
     <section class="explore-split">
       <div class="explore-left">
-        <p class="hero-eyebrow">County Explorer</p>
-        <h1>Find your perfect<br>Maryland county</h1>
-        <p class="explore-desc">Pick any of Maryland's 24 counties to get a full breakdown of what life there actually looks like — before you commit to a move.</p>
+        <p class="hero-eyebrow">{{ t.explore_eyebrow }}</p>
+        <h1>{{ t.explore_title | safe }}</h1>
+        <p class="explore-desc">{{ t.explore_desc }}</p>
         <ul class="explore-checklist">
-          <li>☀️ Summer &amp; winter temperatures</li>
-          <li>💰 Monthly cost of living estimate</li>
-          <li>🛡️ Crime &amp; safety rating with context</li>
-          <li>🎓 School district quality &amp; details</li>
-          <li>🌍 Full racial &amp; ethnic breakdown</li>
-          <li>📍 Interactive map</li>
-          <li>🤖 AI assistant for follow-up questions</li>
+          <li>☀️ {{ t.explore_check1 }}</li>
+          <li>💰 {{ t.explore_check2 }}</li>
+          <li>🛡️ {{ t.explore_check3 }}</li>
+          <li>🎓 {{ t.explore_check4 }}</li>
+          <li>🌍 {{ t.explore_check5 }}</li>
+          <li>📍 {{ t.explore_check6 }}</li>
+          <li>🤖 {{ t.explore_check7 }}</li>
         </ul>
       </div>
 
       <div class="explore-right">
         <form method="post" action="/result" class="explore-form" id="exploreForm">
-          <h2>Select a county</h2>
+          <h2>{{ t.explore_form_title }}</h2>
           {% if error %}
             <p class="error">{{ error }}</p>
           {% endif %}
-          <label for="county-select">Maryland county</label>
+          <label for="county-select">{{ t.explore_form_label }}</label>
           <select id="county-select" name="county" required>
-            <option value="">-- Choose a county --</option>
+            <option value="">{{ t.explore_placeholder }}</option>
             {% for county in counties %}
               <option value="{{ county }}">{{ county }}</option>
             {% endfor %}
           </select>
-          <button type="submit">Get Insights →</button>
+          <button type="submit">{{ t.explore_form_btn }}</button>
         </form>
       </div>
     </section>
 
-    <!-- Stats banner -->
     <section class="explore-banner">
-      <div class="banner-stat"><span>24</span>Counties covered</div>
+      <div class="banner-stat"><span>24</span>{{ t.explore_banner1 }}</div>
       <div class="banner-divider"></div>
-      <div class="banner-stat"><span>5</span>Data categories</div>
+      <div class="banner-stat"><span>5</span>{{ t.explore_banner2 }}</div>
       <div class="banner-divider"></div>
-      <div class="banner-stat"><span>1</span>Easy search</div>
+      <div class="banner-stat"><span>1</span>{{ t.explore_banner3 }}</div>
     </section>
 
   </main>
 
-  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+  <footer>{{ t.footer }}</footer>
 
   <a href="/assistant" class="ai-fab">
-    <span class="fab-icon">🤖</span> Ask AI
+    <span class="fab-icon">🤖</span> {{ t.ask_ai }}
   </a>
 
 </body>

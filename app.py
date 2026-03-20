@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from translations import TRANSLATIONS
 import sqlite3
 import os
 import requests as req
@@ -257,6 +258,20 @@ def load_user(user_id):
     if row:
         return User(row["id"], row["username"], row["email"])
     return None
+
+# ---------------------------------------------------
+# Language support
+# ---------------------------------------------------
+@app.context_processor
+def inject_lang():
+    lang = session.get('lang', 'en')
+    return {'t': TRANSLATIONS[lang], 'lang': lang}
+
+@app.route("/set-lang/<code>")
+def set_lang(code):
+    if code in ('en', 'es'):
+        session['lang'] = code
+    return redirect(request.referrer or url_for('index'))
 
 # ---------------------------------------------------
 # Scoring: returns raw 0–100 AND star 1.0–5.0
@@ -527,7 +542,8 @@ You have knowledge of all 24 Maryland counties.
 Be concise (under 100 words), warm, and genuinely helpful.
 Based on the token limit, make sure you are fully responding the question, don't truncate any part.
 If asked to compare counties, draw on your Maryland knowledge.
-Never make up data — use the snapshot above for this county and general knowledge for others."""
+Never make up data — use the snapshot above for this county and general knowledge for others.
+{"Respond in Spanish." if session.get("lang") == "es" else ""}"""
 
     # Convert history to Gemini format
     gemini_history = []

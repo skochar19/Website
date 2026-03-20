@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8" />
   <title>AI Assistant · Settle Smart</title>
@@ -17,16 +17,24 @@
       </div>
     </a>
     <nav class="nav-links">
-      <a href="/">Home</a>
-      <a href="/explore">Explore</a>
-      <a href="/compare">Compare</a>
+      <div class="lang-toggle">
+        {% if lang == 'en' %}
+          <a href="/set-lang/es" class="lang-btn" title="Español">🇪🇸</a>
+        {% else %}
+          <a href="/set-lang/en" class="lang-btn" title="English">🇺🇸</a>
+        {% endif %}
+      </div>
+      <span class="nav-divider">|</span>
+      <a href="/">{{ t.nav_home }}</a>
+      <a href="/explore">{{ t.nav_explore }}</a>
+      <a href="/compare">{{ t.nav_compare }}</a>
       {% if current_user.is_authenticated %}
         <span class="nav-divider">|</span>
-        <a href="/history">History</a>
-        <a href="/logout" class="nav-auth">Logout</a>
+        <a href="/history">{{ t.nav_history }}</a>
+        <a href="/logout" class="nav-auth">{{ t.nav_logout }}</a>
       {% else %}
         <span class="nav-divider">|</span>
-        <a href="/login" class="nav-auth">Log In</a>
+        <a href="/login" class="nav-auth">{{ t.nav_login }}</a>
       {% endif %}
     </nav>
   </header>
@@ -34,40 +42,36 @@
   <main class="assistant-page">
     <div class="assistant-layout">
 
-      <!-- Left: info panel -->
       <aside class="assistant-sidebar">
         <div class="assistant-avatar">🤖</div>
-        <h2>Settle Smart Assistant</h2>
-        <p>Ask me anything about Maryland counties — safety, cost of living, schools, weather, diversity, and more.</p>
+        <h2>{{ t.assistant_title }}</h2>
+        <p>{{ t.assistant_desc }}</p>
 
         <div class="suggestion-list">
-          <p class="suggestion-label">Try asking:</p>
-          <button class="suggestion" data-q="Which county is the safest in Maryland?">Which county is the safest?</button>
-          <button class="suggestion" data-q="Which county has the best schools?">Which has the best schools?</button>
-          <button class="suggestion" data-q="What is the most affordable county?">Most affordable county?</button>
-          <button class="suggestion" data-q="Compare Howard County and Montgomery County">Compare Howard &amp; Montgomery</button>
-          <button class="suggestion" data-q="Which county is best for families?">Best county for families?</button>
-          <button class="suggestion" data-q="Which county has the most diversity?">Most diverse county?</button>
+          <p class="suggestion-label">{{ t.assistant_try }}</p>
+          <button class="suggestion" data-q="{{ t.sug1_q }}">{{ t.sug1 }}</button>
+          <button class="suggestion" data-q="{{ t.sug2_q }}">{{ t.sug2 }}</button>
+          <button class="suggestion" data-q="{{ t.sug3_q }}">{{ t.sug3 }}</button>
+          <button class="suggestion" data-q="{{ t.sug4_q }}">{{ t.sug4 }}</button>
+          <button class="suggestion" data-q="{{ t.sug5_q }}">{{ t.sug5 }}</button>
+          <button class="suggestion" data-q="{{ t.sug6_q }}">{{ t.sug6 }}</button>
         </div>
       </aside>
 
-      <!-- Right: chat window -->
       <section class="assistant-chat">
         <div class="chat-box full" id="chatBox">
-          <div class="chat-msg bot">
-            Hi! I'm your Settle Smart assistant. I know all 24 Maryland counties inside and out. Ask me anything about where to live — safety, schools, cost of living, weather, or diversity.
-          </div>
+          <div class="chat-msg bot">{{ t.assistant_greeting }}</div>
         </div>
         <div class="chat-input-row">
-          <input type="text" id="chatInput" placeholder="Ask a question about Maryland counties…" autocomplete="off" />
-          <button class="chat-send" id="chatSend">Send</button>
+          <input type="text" id="chatInput" placeholder="{{ t.assistant_placeholder }}" autocomplete="off" />
+          <button class="chat-send" id="chatSend">{{ t.assistant_send }}</button>
         </div>
       </section>
 
     </div>
   </main>
 
-  <footer>© 2025 Settle Smart | Smarter Choices Better Places</footer>
+  <footer>{{ t.footer }}</footer>
 
   <script>
     const chatBox   = document.getElementById("chatBox");
@@ -122,7 +126,6 @@
       btn.addEventListener("click", () => sendChat(btn.dataset.q));
     });
 
-    // Pre-fill from ?q= param (coming from history page)
     const params = new URLSearchParams(window.location.search);
     const preQ = params.get("q");
     if (preQ) {
